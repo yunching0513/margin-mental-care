@@ -13,16 +13,25 @@
   src:url("font/huninn-subset.woff2") format("woff2");
   font-weight:400;font-style:normal;font-display:swap;
 }
+/* ── 主題:紙(預設) ─────────────────── */
 :root{
   --paper:#FAF7F2;
   --paper-2:#F3EEE6;
   --ink:#2A2521;
   --ink-2:#5B534B;
   --ink-3:#948B80;
+  --ph:#C7BEB2;
   --clay:#C96442;
   --clay-soft:#E4B49F;
   --line:rgba(42,37,33,.13);
   --line-2:rgba(42,37,33,.07);
+
+  --bg-1:#E8E1D6; --bg-2:#F5EFE5; --bg-3:#DED5C7;
+  --card-1:#FFFDF9; --card-2:#F4EEE4;
+  --dcard-1:#33291F; --dcard-2:#241C15;
+  --dot-bg:rgba(250,247,242,.82);
+  --fade-mid:rgba(250,247,242,.86);
+  --shadow:rgba(60,45,32,.42);
 
   --night:#191411;
   --night-2:#221B16;
@@ -30,9 +39,60 @@
   --night-ink-2:#B3A597;
   --night-line:rgba(237,228,218,.14);
 
-  --serif:"jf-openhuninn","Yuanti TC","Hiragino Maru Gothic ProN","PingFang TC",sans-serif;
+  --round:"jf-openhuninn","Yuanti TC","Hiragino Maru Gothic ProN","PingFang TC",sans-serif;
+  --ming:"Noto Serif TC","Songti TC","Source Han Serif TC","PingFang TC",serif;
+  --serif:var(--round);
   --sans:"Noto Sans TC","PingFang TC","Helvetica Neue",sans-serif;
   --ease:cubic-bezier(.32,.72,.28,1);
+}
+:root[data-font="ming"]{--serif:var(--ming)}
+
+/* ── 主題:墨 ───────────────────────── */
+:root[data-theme="ink"]{
+  --paper:#1A1714;
+  --paper-2:#221E19;
+  --ink:#ECE4DA;
+  --ink-2:#B3A797;
+  --ink-3:#7E7466;
+  --ph:#57503F;
+  --clay:#D98E6A;
+  --clay-soft:#E4B49F;
+  --line:rgba(236,228,218,.16);
+  --line-2:rgba(236,228,218,.08);
+
+  --bg-1:#100E0C; --bg-2:#1C1815; --bg-3:#0A0908;
+  --card-1:#26211B; --card-2:#1D1915;
+  --dcard-1:#2E2720; --dcard-2:#211B16;
+  --dot-bg:rgba(38,33,27,.86);
+  --fade-mid:rgba(26,23,20,.86);
+  --shadow:rgba(0,0,0,.6);
+}
+
+/* ── 主題:莫蘭迪 ───────────────────── */
+:root[data-theme="morandi"]{
+  --paper:#EAE7E1;
+  --paper-2:#DFDBD4;
+  --ink:#3D3E3A;
+  --ink-2:#6C6D66;
+  --ink-3:#9B9A90;
+  --ph:#BEBCB2;
+  --clay:#A67F79;
+  --clay-soft:#C6A9A2;
+  --line:rgba(61,62,58,.15);
+  --line-2:rgba(61,62,58,.08);
+
+  --bg-1:#D6D2CB; --bg-2:#E4E1DA; --bg-3:#C4C3BA;
+  --card-1:#F1EFEA; --card-2:#E2DFD8;
+  --dcard-1:#4A4C46; --dcard-2:#3A3C37;
+  --dot-bg:rgba(234,231,225,.84);
+  --fade-mid:rgba(234,231,225,.86);
+  --shadow:rgba(60,60,52,.36);
+
+  --night:#3A3C37;
+  --night-2:#454741;
+  --night-ink:#E8E5DE;
+  --night-ink-2:#AFAEA4;
+  --night-line:rgba(232,229,222,.16);
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;height:100%}
