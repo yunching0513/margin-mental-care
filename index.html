@@ -284,6 +284,22 @@ body::after{
 .ghost{flex:1;font-family:var(--sans);font-size:11px;letter-spacing:.16em;padding:14px 0;background:none;border:1px solid var(--night-line);border-radius:2px;color:var(--night-ink-2);cursor:pointer;transition:all .45s var(--ease)}
 .ghost:hover{border-color:var(--clay-soft);color:var(--clay-soft)}
 
+/* 具體化改寫器 */
+.label2{font-family:var(--sans);font-size:10px;letter-spacing:.28em;color:var(--clay-soft);margin:30px 0 12px}
+.frame{background:var(--night-2);border:1px solid var(--night-line);border-radius:3px;padding:22px;font-size:16px;line-height:2.1;letter-spacing:.05em;font-weight:300}
+.frame mark{background:rgba(201,100,66,.22);color:#F0C3AE;padding:1px 3px;border-radius:2px}
+.hint{font-family:var(--sans);font-size:10.5px;line-height:2;color:var(--night-ink-2);font-weight:300;margin:12px 0 0}
+.qb{border-top:1px solid var(--night-line);padding:20px 0 4px}
+.qb p{font-size:14.5px;line-height:1.95;letter-spacing:.05em;color:var(--night-ink);margin:0 0 10px;font-weight:300}
+.qb input{width:100%;background:transparent;border:0;border-bottom:1px solid var(--night-line);outline:none;font-family:var(--serif);font-size:16px;letter-spacing:.05em;color:var(--night-ink);padding:8px 0}
+.qb input::placeholder{color:#5C5147}
+.qb input:focus{border-bottom-color:var(--clay-soft)}
+.cmp{margin-top:8px}
+.cmp .row{padding:20px 0;border-bottom:1px solid var(--night-line)}
+.cmp .k{font-family:var(--sans);font-size:10px;letter-spacing:.24em;color:var(--night-ink-2);margin-bottom:12px}
+.cmp .a{font-size:16.5px;line-height:2.1;letter-spacing:.05em;font-weight:300;color:#8E8177}
+.cmp .b{font-size:16.5px;line-height:2.1;letter-spacing:.05em;font-weight:400;color:var(--night-ink)}
+
 /* 危機 */
 .hold{font-size:19px;line-height:2.15;letter-spacing:.09em;font-weight:300;margin:0 0 34px}
 .tel{display:flex;align-items:center;justify-content:space-between;width:100%;padding:20px 22px;margin-bottom:10px;background:var(--night-2);border:1px solid var(--night-line);border-radius:3px;color:var(--night-ink);cursor:pointer;font-family:var(--serif);transition:all .45s var(--ease)}
@@ -806,7 +822,11 @@ function r2(){
     <button class="ghost" onclick="burn(this)">寫完了,燒掉</button>
     <button class="ghost" onclick="third(this)">換成第三人稱</button>
   </div>
-  <div class="steps" style="margin-top:34px">
+  <button class="route" style="margin-top:34px" onclick="r2b()">
+    <svg width="26" height="26" viewBox="0 0 26 26" fill="none" stroke-width="1" stroke-linecap="round"><path d="M4 17c4-9 14-9 18 0"/><path d="M13 3v4M6 7l2 3M20 7l-2 3"/></svg>
+    <span><b>把「為什麼」換成「怎麼做」</b><i>換一種想法的形狀 · 約 3 分鐘</i></span>
+  </button>
+  <div class="steps" style="margin-top:22px">
     <button class="step" onclick="this.classList.toggle('act')"><span class="n">·</span><span><b>擔憂時段</b><p>「今天晚上七點,我給這件事十五分鐘。」把它排進行事曆 — 重點不是不想,是改變想的時間與地點。</p></span></button>
     <button class="step" onclick="this.classList.toggle('act')"><span class="n">·</span><span><b>一個可決定的事</b><p>這件事裡,接下來這一小時,有什麼是你能決定的?沒有就是沒有,不用勉強找光明面。</p></span></button>
   </div>
@@ -822,6 +842,62 @@ function third(b){
   if(!t.value.trim()){t.placeholder='先寫一點東西,才能換位。';return}
   t.value='她'+t.value.replace(/^我/,'');
   b.textContent='距離感,是反芻的解藥';
+}
+
+/* SOS-3b 具體化改寫器(RF-CBT:改思考的形狀,不是內容) */
+const ABS=['為什麼','總是','永遠','根本','每次','都是','是不是','代表','沒有人','沒人','一定','活該','應該','怎麼會','老是'];
+function r2b(){
+  render(`<h2>把「為什麼」換成「怎麼做」</h2>
+  <div class="sub">思考的形狀,比思考的內容容易改</div>
+  <p class="hold" style="font-size:15.5px;margin-bottom:8px">你不是壞掉了。<br>你的大腦在解一道題,<br>只是卡在「為什麼是我」那一段,<br>過不去「那我現在能做什麼」。</p>
+  <div class="label2">那句一直重複的話</div>
+  <textarea class="dump" id="absIn" style="min-height:92px" placeholder="例如:為什麼每次都是我在收拾?"></textarea>
+  <div class="rowbtn"><button class="ghost" onclick="shapeIt()">看看它的形狀</button></div>
+
+  <div id="shaped" style="display:none">
+    <div class="label2">它現在的形狀</div>
+    <div class="frame" id="absOut"></div>
+    <p class="hint" id="absNote"></p>
+
+    <div class="label2">換三個問題問問看</div>
+    <div class="qb"><p>那件事具體發生在什麼時候、什麼地方?</p><input id="q1" placeholder="昨天晚上,在廚房"></div>
+    <div class="qb"><p>當時實際上發生的第一件事是什麼?先不要評價。</p><input id="q2" placeholder="我看到水槽裡有三個碗"></div>
+    <div class="qb"><p>接下來這一小時,你可以做的一個小動作是什麼?</p><input id="q3" placeholder="傳一句話跟他說我需要幫忙"></div>
+    <div class="rowbtn"><button class="ghost" onclick="buildIt()">組起來</button></div>
+  </div>
+
+  <div id="built" style="display:none">
+    <div class="cmp">
+      <div class="row"><div class="k">原本的形狀</div><div class="a" id="cmpA"></div></div>
+      <div class="row"><div class="k">現在的形狀</div><div class="b" id="cmpB"></div></div>
+    </div>
+    <p class="hint">兩句講的是同一件事。<br>差別是第二句有下一步。</p>
+    <div class="rowbtn"><button class="ghost" onclick="finish()">可以了</button><button class="ghost" onclick="r2()">再寫一次</button></div>
+  </div>
+
+  <div class="note">這是反芻焦點認知行為治療(RF-CBT)的核心做法:不辯論想法對不對,只把抽象的評價換成具體的過程。</div>`,r2b);
+}
+function shapeIt(){
+  const v=document.getElementById('absIn').value.trim();
+  if(!v){document.getElementById('absIn').placeholder='先寫一句。任何一句都可以。';return}
+  let hit=[],out=v;
+  ABS.forEach(w=>{ if(out.includes(w)){hit.push(w); out=out.split(w).join('§'+w+'§')} });
+  document.getElementById('absOut').innerHTML=out.split('§').map((s,i)=>i%2?`<mark>${s}</mark>`:s).join('');
+  document.getElementById('absNote').textContent = hit.length
+    ? `標起來的是評價,不是事實。它們讓這句話沒有出口 — 沒有時間、沒有地點、沒有下一步。`
+    : `這句話沒有明顯的評價詞。那更好,直接往下走。`;
+  const s=document.getElementById('shaped'); s.style.display='block';
+  s.style.animation='none';void s.offsetWidth;s.style.animation='up .7s var(--ease)';
+}
+function buildIt(){
+  const g=id=>document.getElementById(id).value.trim();
+  const a=g('q1'),b=g('q2'),c=g('q3');
+  if(!a||!b||!c){document.getElementById('q1').placeholder='三個都填,才組得起來';return}
+  document.getElementById('cmpA').textContent=document.getElementById('absIn').value.trim();
+  document.getElementById('cmpB').textContent=`${a},${b}。接下來這一小時,我要${c}。`;
+  const el=document.getElementById('built'); el.style.display='block';
+  el.style.animation='none';void el.offsetWidth;el.style.animation='up .8s var(--ease)';
+  el.scrollIntoView({behavior:'smooth',block:'start'});
 }
 
 /* SOS-4 危機 */
