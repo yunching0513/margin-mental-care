@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>留白 Margin — 原型:今天 · 急救</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+@font-face{
+  font-family:"jf-openhuninn";
+  src:url("font/huninn-subset.woff2") format("woff2");
+  font-weight:400;font-style:normal;font-display:swap;
+}
+/* ── 主題:紙(預設) ─────────────────── */
+:root{
+  --paper:#FAF7F2;
+  --paper-2:#F3EEE6;
+  --ink:#2A2521;
+  --ink-2:#5B534B;
+  --ink-3:#948B80;
+  --ph:#C7BEB2;
+  --clay:#C96442;
+  --clay-soft:#E4B49F;
+  --line:rgba(42,37,33,.13);
+  --line-2:rgba(42,37,33,.07);
+
+  --bg-1:#E8E1D6; --bg-2:#F5EFE5; --bg-3:#DED5C7;
+  --card-1:#FFFDF9; --card-2:#F4EEE4;
+  --dcard-1:#33291F; --dcard-2:#241C15;
+  --dot-bg:rgba(250,247,242,.82);
+  --fade-mid:rgba(250,247,242,.86);
+  --shadow:rgba(60,45,32,.42);
+
+  --night:#191411;
+  --night-2:#221B16;
+  --night-ink:#EDE4DA;
+  --night-ink-2:#B3A597;
+  --night-line:rgba(237,228,218,.14);
+
+  --round:"jf-openhuninn","Yuanti TC","Hiragino Maru Gothic ProN","PingFang TC",sans-serif;
+  --ming:"Noto Serif TC","Songti TC","Source Han Serif TC","PingFang TC",serif;
+  --serif:var(--round);
+  --sans:"Noto Sans TC","PingFang TC","Helvetica Neue",sans-serif;
+  --ease:cubic-bezier(.32,.72,.28,1);
+}
+:root[data-font="ming"]{--serif:var(--ming)}
+
+/* ── 主題:墨 ───────────────────────── */
+:root[data-theme="ink"]{
+  --paper:#1A1714;
+  --paper-2:#221E19;
+  --ink:#ECE4DA;
+  --ink-2:#B3A797;
+  --ink-3:#7E7466;
+  --ph:#57503F;
+  --clay:#D98E6A;
+  --clay-soft:#E4B49F;
+  --line:rgba(236,228,218,.16);
+  --line-2:rgba(236,228,218,.08);
+
+  --bg-1:#100E0C; --bg-2:#1C1815; --bg-3:#0A0908;
+  --card-1:#26211B; --card-2:#1D1915;
+  --dcard-1:#2E2720; --dcard-2:#211B16;
+  --dot-bg:rgba(38,33,27,.86);
+  --fade-mid:rgba(26,23,20,.86);
+  --shadow:rgba(0,0,0,.6);
+}
+
+/* ── 主題:莫蘭迪 ───────────────────── */
+:root[data-theme="morandi"]{
+  --paper:#EAE7E1;
+  --paper-2:#DFDBD4;
+  --ink:#3D3E3A;
+  --ink-2:#6C6D66;
+  --ink-3:#9B9A90;
+  --ph:#BEBCB2;
+  --clay:#A67F79;
+  --clay-soft:#C6A9A2;
+  --line:rgba(61,62,58,.15);
+  --line-2:rgba(61,62,58,.08);
+
+  --bg-1:#D6D2CB; --bg-2:#E4E1DA; --bg-3:#C4C3BA;
+  --card-1:#F1EFEA; --card-2:#E2DFD8;
+  --dcard-1:#4A4C46; --dcard-2:#3A3C37;
+  --dot-bg:rgba(234,231,225,.84);
+  --fade-mid:rgba(234,231,225,.86);
+  --shadow:rgba(60,60,52,.36);
+
+  --night:#3A3C37;
+  --night-2:#454741;
+  --night-ink:#E8E5DE;
+  --night-ink-2:#AFAEA4;
+  --night-line:rgba(232,229,222,.16);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%}
+body{
+  font-family:var(--serif);
+  background:#E8E1D6;
+  background-image:
+    radial-gradient(ellipse 90% 60% at 50% -10%, #F5EFE5 0%, rgba(245,239,229,0) 70%),
+    radial-gradient(ellipse 70% 50% at 90% 110%, #DED5C7 0%, rgba(222,213,199,0) 70%);
+  color:var(--ink);
+  display:flex; align-items:center; justify-content:center;
+  min-height:100vh; padding:32px 16px;
+}
+body::after{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:9999; opacity:.22;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
+}
+
+/* ── 外框 ───────────────────────────── */
+.stage{display:flex;gap:44px;align-items:flex-start;flex-wrap:wrap;justify-content:center}
+.caption{max-width:250px;padding-top:28px}
+.caption h1{font-size:26px;font-weight:500;letter-spacing:.16em;margin:0 0 4px}
+.caption .en{font-family:var(--sans);font-size:10px;letter-spacing:.4em;color:var(--ink-3);text-transform:uppercase}
+.caption p{font-size:13.5px;line-height:2.05;color:var(--ink-2);margin:22px 0 0;font-weight:300}
+.caption hr{border:0;border-top:1px solid var(--line);margin:24px 0}
+.caption dl{margin:0;font-family:var(--sans);font-size:11px;line-height:1.9;color:var(--ink-3);font-weight:300}
+.caption dt{color:var(--ink-2);letter-spacing:.08em;margin-top:12px}
+
+.phone{
+  position:relative; width:392px; height:812px; flex:none;
+  border-radius:44px; background:var(--paper);
+  box-shadow:0 1px 0 rgba(255,255,255,.7) inset, 0 34px 70px -24px rgba(60,45,32,.42), 0 0 0 1px rgba(42,37,33,.1);
+  overflow:hidden;
+}
+.screen{position:absolute;inset:0;overflow:hidden}
+
+/* ── 捲動區 ─────────────────────────── */
+.scroll{position:absolute;inset:0 0 76px 0;overflow-y:auto;overflow-x:hidden;scrollbar-width:none}
+.scroll::-webkit-scrollbar{display:none}
+.pad{padding:64px 30px 56px}
+.topfade{position:absolute;top:0;left:0;right:0;height:58px;z-index:19;pointer-events:none;background:linear-gradient(var(--paper) 52%,rgba(250,247,242,.86) 76%,rgba(250,247,242,0))}
+
+/* ── 頁首 ───────────────────────────── */
+.status{position:absolute;top:0;left:0;right:0;height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;font-family:var(--sans);font-size:11px;letter-spacing:.06em;color:var(--ink-3);z-index:21;pointer-events:none}
+.datehead{margin-bottom:38px}
+.datehead .d{font-size:12px;font-family:var(--sans);letter-spacing:.34em;color:var(--ink-3);font-weight:300}
+.datehead .t{font-size:15px;margin-top:9px;letter-spacing:.1em;color:var(--ink-2);font-weight:300}
+
+/* ── 卡片 ───────────────────────────── */
+.card{background:transparent;margin-bottom:44px}
+.label{font-family:var(--sans);font-size:10px;letter-spacing:.34em;color:var(--ink-3);font-weight:400;margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.label::after{content:"";flex:1;height:1px;background:var(--line-2)}
+
+/* 語氣選擇器 */
+.tones{display:flex;gap:6px;margin-bottom:20px}
+.tone{
+  flex:1;font-family:var(--sans);font-size:11px;font-weight:300;letter-spacing:.1em;
+  padding:8px 0;border:1px solid var(--line);border-radius:2px;background:transparent;color:var(--ink-3);
+  cursor:pointer;transition:all .45s var(--ease);
+}
+.tone:hover{color:var(--ink-2);border-color:rgba(42,37,33,.22)}
+.tone[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+
+/* 晨間之窗 — 翻面 */
+.window{perspective:1400px;height:250px;cursor:pointer}
+.win-in{position:relative;width:100%;height:100%;transition:transform 1s var(--ease);transform-style:preserve-3d}
+.window.flip .win-in{transform:rotateY(180deg)}
+.face{
+  position:absolute;inset:0;backface-visibility:hidden;border-radius:3px;
+  padding:38px 32px;display:flex;flex-direction:column;justify-content:space-between;
+  background:linear-gradient(163deg,#FFFDF9,#F4EEE4);
+  box-shadow:0 1px 2px rgba(60,45,32,.07),0 14px 34px -18px rgba(60,45,32,.3);
+}
+.face::before{content:"";position:absolute;inset:11px;border:1px solid var(--line-2);border-radius:1px;pointer-events:none}
+.back{transform:rotateY(180deg);background:linear-gradient(163deg,#33291F,#241C15);color:var(--night-ink)}
+.back::before{border-color:rgba(237,228,218,.14)}
+.quote{font-size:20.5px;line-height:2.0;letter-spacing:.055em;font-weight:400;transition:opacity .5s}
+.ask{font-size:14px;line-height:2.05;letter-spacing:.05em;color:var(--ink-2);font-weight:300;border-top:1px solid var(--line-2);padding-top:17px;transition:opacity .5s}
+.flipnote{position:absolute;bottom:14px;right:20px;font-family:var(--sans);font-size:9px;letter-spacing:.24em;color:var(--ink-3);opacity:.75}
+.back .mech-k{font-family:var(--sans);font-size:9.5px;letter-spacing:.34em;color:var(--clay-soft);margin-bottom:20px}
+.back .mech-b{font-size:15.5px;line-height:2.1;letter-spacing:.05em;font-weight:300}
+.back .mech-c{font-family:var(--sans);font-size:10.5px;line-height:2;color:var(--night-ink-2);font-weight:300;border-top:1px solid rgba(237,228,218,.14);padding-top:15px}
+
+/* 三行日課 */
+.line{border-bottom:1px solid var(--line-2);padding:20px 0 14px}
+.line:first-of-type{border-top:1px solid var(--line-2)}
+.q{display:flex;align-items:baseline;justify-content:space-between;gap:14px;margin-bottom:9px}
+.q span{font-size:14.5px;letter-spacing:.05em;color:var(--ink-2);font-weight:300;line-height:1.85}
+.q em{font-family:var(--sans);font-size:9px;letter-spacing:.16em;color:var(--clay);font-style:normal;white-space:nowrap;opacity:.85}
+.line textarea{
+  width:100%;border:0;background:transparent;resize:none;outline:none;overflow:hidden;
+  font-family:var(--serif);font-size:16px;line-height:2.05;letter-spacing:.05em;color:var(--ink);
+  min-height:34px;padding:2px 0;
+}
+.line textarea::placeholder{color:#C7BEB2;font-weight:300}
+
+.done{text-align:center;padding:0;max-height:0;overflow:hidden;opacity:0;transform:translateY(8px);transition:all .9s var(--ease);pointer-events:none}
+.done.on{opacity:1;transform:none;pointer-events:auto;max-height:220px;padding:36px 0 6px}
+.done p{font-size:15px;letter-spacing:.1em;line-height:2.1;color:var(--ink-2);font-weight:300;margin:0 0 20px}
+.leave{font-family:var(--sans);font-size:11px;letter-spacing:.22em;color:var(--ink-3);background:none;border:1px solid var(--line);padding:11px 26px;border-radius:2px;cursor:pointer;transition:all .5s var(--ease)}
+.leave:hover{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+
+/* 情緒色環 */
+.wheel-wrap{display:flex;flex-direction:column;align-items:center}
+.chips{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin-bottom:26px}
+.chip{font-family:var(--sans);font-size:11px;font-weight:300;letter-spacing:.14em;padding:6px 15px;border:1px solid var(--line);border-radius:20px;background:transparent;color:var(--ink-3);cursor:pointer;transition:all .4s var(--ease)}
+.chip[aria-pressed="true"]{border-color:var(--clay);color:var(--clay);background:rgba(201,100,66,.05)}
+.wheel{position:relative;width:272px;height:272px;touch-action:none;cursor:grab}
+.wheel:active{cursor:grabbing}
+.wheel .ringline{position:absolute;inset:34px;border:1px solid var(--line-2);border-radius:50%}
+.rotor{position:absolute;inset:0;transition:transform .9s var(--ease)}
+.rotor.drag{transition:none}
+.word{
+  position:absolute;left:50%;top:50%;
+  font-size:12.5px;letter-spacing:.09em;color:var(--ink-3);font-weight:300;white-space:nowrap;
+  background:transparent;border:0;cursor:pointer;padding:5px 8px;transition:color .4s,opacity .4s;
+}
+.word:hover{color:var(--ink-2)}
+.word.sel{color:var(--clay);font-weight:500}
+.word.dim{opacity:.28}
+.hub{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:150px;text-align:center;pointer-events:none}
+.hub .ph{font-family:var(--sans);font-size:10px;letter-spacing:.24em;color:#CBC2B6;font-weight:300}
+.hub .picked{font-size:16px;line-height:2;letter-spacing:.06em;color:var(--ink)}
+
+/* 呼吸入口 */
+.entry{display:flex;align-items:center;justify-content:space-between;width:100%;padding:19px 0;background:none;border:0;border-top:1px solid var(--line-2);border-bottom:1px solid var(--line-2);cursor:pointer;font-family:var(--serif);text-align:left}
+.entry b{font-size:15px;font-weight:400;letter-spacing:.09em;color:var(--ink)}
+.entry i{display:block;font-family:var(--sans);font-style:normal;font-size:10px;letter-spacing:.14em;color:var(--ink-3);margin-top:6px;font-weight:300}
+.entry svg{flex:none;stroke:var(--ink-3)}
+
+/* ── Tab bar ───────────────────────── */
+.tabbar{position:absolute;bottom:0;left:0;right:0;height:76px;display:flex;align-items:flex-start;padding-top:15px;background:linear-gradient(to top,var(--paper) 62%,rgba(250,247,242,0));border-top:1px solid var(--line-2);z-index:20}
+.tab{flex:1;background:none;border:0;font-family:var(--sans);font-size:11px;letter-spacing:.24em;color:#C1B8AC;cursor:pointer;font-weight:300;transition:color .5s;padding:6px 0}
+.tab.on{color:var(--ink)}
+.tab.on::after{content:"";display:block;width:3px;height:3px;border-radius:50%;background:var(--clay);margin:7px auto 0}
+
+/* ── 常駐急救點 ─────────────────────── */
+.sosdot{
+  position:absolute;right:22px;bottom:96px;width:52px;height:52px;border-radius:50%;
+  background:rgba(250,247,242,.82);backdrop-filter:blur(9px);
+  border:1px solid rgba(201,100,66,.3);color:var(--clay);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:30;
+  box-shadow:0 6px 20px -8px rgba(60,45,32,.4);
+  font-family:var(--sans);font-size:10px;letter-spacing:.1em;
+  animation:pulse 5.5s var(--ease) infinite;
+}
+@keyframes pulse{0%,100%{box-shadow:0 6px 20px -8px rgba(60,45,32,.4),0 0 0 0 rgba(201,100,66,.16)}50%{box-shadow:0 6px 20px -8px rgba(60,45,32,.4),0 0 0 11px rgba(201,100,66,0)}}
+
+/* ── 急救層 ─────────────────────────── */
+.sos{position:absolute;inset:0;background:var(--night);color:var(--night-ink);z-index:60;display:none;flex-direction:column}
+.sos.on{display:flex;animation:rise .55s var(--ease)}
+@keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.sos .scroll{bottom:0}
+.sosbar{position:absolute;top:0;left:0;right:0;height:62px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;z-index:6;background:linear-gradient(var(--night) 58%,rgba(25,20,17,.85) 80%,rgba(25,20,17,0))}
+.sosbar button{background:none;border:0;font-family:var(--sans);font-size:11px;letter-spacing:.2em;color:var(--night-ink-2);cursor:pointer;padding:8px 0}
+.sos .pad{padding:80px 30px 48px}
+.sos h2{font-size:23px;font-weight:400;letter-spacing:.1em;line-height:1.9;margin:0 0 8px}
+.sos .sub{font-family:var(--sans);font-size:11px;letter-spacing:.16em;color:var(--night-ink-2);font-weight:300;margin-bottom:36px}
+
+.route{display:flex;align-items:center;gap:18px;width:100%;text-align:left;padding:23px 22px;margin-bottom:11px;background:var(--night-2);border:1px solid var(--night-line);border-radius:3px;cursor:pointer;font-family:var(--serif);color:var(--night-ink);transition:all .45s var(--ease)}
+.route:hover{background:#2A211A;transform:translateX(3px)}
+.route b{font-size:18px;font-weight:400;letter-spacing:.09em;display:block}
+.route i{font-family:var(--sans);font-style:normal;font-size:10px;letter-spacing:.12em;color:var(--night-ink-2);display:block;margin-top:7px;font-weight:300}
+.route svg{flex:none;stroke:var(--clay-soft);opacity:.9}
+.route.crisis{background:transparent;border-color:rgba(228,180,159,.34)}
+.route.crisis svg{stroke:var(--clay-soft)}
+
+/* 呼吸 */
+.breath{display:flex;flex-direction:column;align-items:center;padding-top:14px}
+.orb{position:relative;width:230px;height:230px;display:flex;align-items:center;justify-content:center;margin-bottom:34px}
+.orb .halo,.orb .core{position:absolute;border-radius:50%;transition:transform var(--dur,4s) var(--ease),opacity var(--dur,4s) var(--ease)}
+.orb .halo{width:230px;height:230px;border:1px solid rgba(228,180,159,.22);transform:scale(var(--s,.52))}
+.orb .core{width:230px;height:230px;background:radial-gradient(circle,rgba(228,180,159,.3),rgba(201,100,66,.08) 62%,transparent 72%);transform:scale(var(--s,.52))}
+.orb .cue{position:relative;font-size:19px;letter-spacing:.24em;color:var(--night-ink);z-index:2;font-weight:300}
+.count{font-family:var(--sans);font-size:10px;letter-spacing:.26em;color:var(--night-ink-2);margin-bottom:30px;font-weight:300}
+.steps{width:100%;border-top:1px solid var(--night-line)}
+.step{display:flex;gap:16px;align-items:flex-start;padding:19px 2px;border-bottom:1px solid var(--night-line);width:100%;background:none;border-left:0;border-right:0;border-top:0;text-align:left;cursor:pointer;font-family:var(--serif);color:var(--night-ink);transition:opacity .4s}
+.step:hover{opacity:.72}
+.step .n{font-family:var(--sans);font-size:10px;letter-spacing:.1em;color:var(--clay-soft);padding-top:5px;min-width:20px}
+.step b{font-size:15.5px;font-weight:400;letter-spacing:.07em;display:block}
+.step p{font-family:var(--sans);font-size:11px;line-height:1.95;color:var(--night-ink-2);margin:7px 0 0;font-weight:300}
+.step p.warn{color:#D9A08A}
+.step.act{background:linear-gradient(90deg,rgba(201,100,66,.12),transparent)}
+
+/* 傾倒 */
+.dump{width:100%;min-height:200px;background:var(--night-2);border:1px solid var(--night-line);border-radius:3px;padding:22px;font-family:var(--serif);font-size:16px;line-height:2.05;letter-spacing:.05em;color:var(--night-ink);resize:none;outline:none}
+.dump::placeholder{color:#5C5147}
+.rowbtn{display:flex;gap:9px;margin-top:16px}
+.ghost{flex:1;font-family:var(--sans);font-size:11px;letter-spacing:.16em;padding:14px 0;background:none;border:1px solid var(--night-line);border-radius:2px;color:var(--night-ink-2);cursor:pointer;transition:all .45s var(--ease)}
+.ghost:hover{border-color:var(--clay-soft);color:var(--clay-soft)}
+
+/* 具體化改寫器 */
+.label2{font-family:var(--sans);font-size:10px;letter-spacing:.28em;color:var(--clay-soft);margin:30px 0 12px}
+.frame{background:var(--night-2);border:1px solid var(--night-line);border-radius:3px;padding:22px;font-size:16px;line-height:2.1;letter-spacing:.05em;font-weight:300}
+.frame mark{background:rgba(201,100,66,.22);color:#F0C3AE;padding:1px 3px;border-radius:2px}
+.hint{font-family:var(--sans);font-size:10.5px;line-height:2;color:var(--night-ink-2);font-weight:300;margin:12px 0 0}
+.qb{border-top:1px solid var(--night-line);padding:20px 0 4px}
+.qb p{font-size:14.5px;line-height:1.95;letter-spacing:.05em;color:var(--night-ink);margin:0 0 10px;font-weight:300}
+.qb input{width:100%;background:transparent;border:0;border-bottom:1px solid var(--night-line);outline:none;font-family:var(--serif);font-size:16px;letter-spacing:.05em;color:var(--night-ink);padding:8px 0}
+.qb input::placeholder{color:#5C5147}
+.qb input:focus{border-bottom-color:var(--clay-soft)}
+.cmp{margin-top:8px}
+.cmp .row{padding:20px 0;border-bottom:1px solid var(--night-line)}
+.cmp .k{font-family:var(--sans);font-size:10px;letter-spacing:.24em;color:var(--night-ink-2);margin-bottom:12px}
+.cmp .a{font-size:16.5px;line-height:2.1;letter-spacing:.05em;font-weight:300;color:#8E8177}
+.cmp .b{font-size:16.5px;line-height:2.1;letter-spacing:.05em;font-weight:400;color:var(--night-ink)}
+
+/* 危機 */
+.hold{font-size:19px;line-height:2.15;letter-spacing:.09em;font-weight:300;margin:0 0 34px}
+.tel{display:flex;align-items:center;justify-content:space-between;width:100%;padding:20px 22px;margin-bottom:10px;background:var(--night-2);border:1px solid var(--night-line);border-radius:3px;color:var(--night-ink);cursor:pointer;font-family:var(--serif);transition:all .45s var(--ease)}
+.tel:hover{background:#2A211A}
+.tel b{font-size:16px;font-weight:400;letter-spacing:.08em}
+.tel i{font-family:var(--sans);font-style:normal;font-size:10px;letter-spacing:.14em;color:var(--night-ink-2);display:block;margin-top:6px;font-weight:300}
+.tel .num{font-family:var(--sans);font-size:17px;letter-spacing:.1em;color:var(--clay-soft)}
+.note{font-family:var(--sans);font-size:10.5px;line-height:2;color:#7C7167;margin-top:26px;font-weight:300;border-top:1px solid var(--night-line);padding-top:20px}
+
+/* 結束 */
+.end{position:absolute;inset:0;background:var(--night);display:none;flex-direction:column;align-items:center;justify-content:center;padding:0 46px;text-align:center;z-index:70}
+.end.on{display:flex;animation:fadein 1.4s var(--ease)}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+.end h3{font-size:25px;font-weight:300;letter-spacing:.2em;color:var(--night-ink);margin:0 0 46px;line-height:2}
+.end .askq{font-family:var(--sans);font-size:10.5px;letter-spacing:.18em;color:#6E6359;margin-bottom:16px;font-weight:300}
+.end .opts{display:flex;gap:8px;margin-bottom:44px}
+.end .opts button{font-family:var(--sans);font-size:11px;letter-spacing:.12em;padding:11px 17px;background:none;border:1px solid var(--night-line);border-radius:2px;color:var(--night-ink-2);cursor:pointer;transition:all .45s var(--ease)}
+.end .opts button:hover{border-color:var(--clay-soft);color:var(--clay-soft)}
+.end .close{font-family:var(--sans);font-size:11px;letter-spacing:.24em;color:#6E6359;background:none;border:0;cursor:pointer}
+
+/* ── 月之書 ─────────────────────────── */
+.book{padding-top:58px}
+.seg{display:flex;gap:0;border:1px solid var(--line);border-radius:2px;overflow:hidden;margin-bottom:46px}
+.seg button{flex:1;font-family:var(--sans);font-size:11px;letter-spacing:.2em;padding:9px 0;background:none;border:0;border-right:1px solid var(--line);color:var(--ink-3);cursor:pointer;font-weight:300;transition:all .45s var(--ease)}
+.seg button:last-child{border-right:0}
+.seg button.on{background:var(--ink);color:var(--paper)}
+
+.cover{text-align:center;margin-bottom:62px}
+.cover .yr{font-family:var(--sans);font-size:10px;letter-spacing:.5em;color:var(--ink-3);font-weight:300}
+.cover .mo{font-size:52px;font-weight:300;letter-spacing:.14em;margin:14px 0 12px;line-height:1.2}
+.cover .ord{font-family:var(--sans);font-size:10.5px;letter-spacing:.26em;color:var(--ink-3);font-weight:300}
+.cover .rule{width:26px;height:1px;background:var(--clay);opacity:.5;margin:34px auto}
+.cover .intro{font-size:14.5px;line-height:2.3;letter-spacing:.09em;color:var(--ink-2);font-weight:300;margin:0}
+
+.chap{margin-bottom:58px}
+.aside{font-family:var(--sans);font-size:10.5px;line-height:2;color:var(--ink-3);font-weight:300;margin:16px 0 0}
+
+/* 天氣 */
+#wash{width:100%;height:150px;position:relative}
+#wash svg{display:block;width:100%;height:100%;overflow:visible}
+#wash .hit{fill:transparent;cursor:pointer}
+#wash .hit:hover{fill:rgba(42,37,33,.05)}
+#wash .mark{fill:none;stroke:var(--ink);stroke-width:1;opacity:0}
+.washnote{font-family:var(--sans);font-size:11px;letter-spacing:.1em;color:var(--ink-3);font-weight:300;margin-top:14px;min-height:20px;transition:opacity .4s}
+.washnote b{font-family:var(--serif);font-size:14px;color:var(--ink);letter-spacing:.05em;font-weight:400}
+
+/* 三個詞 */
+.terms{display:flex;justify-content:space-between;align-items:flex-end;padding:8px 0 22px;border-bottom:1px solid var(--line-2)}
+.terms button{background:none;border:0;cursor:pointer;text-align:center;padding:6px 4px;transition:opacity .4s}
+.terms button:hover{opacity:.6}
+.terms b{display:block;font-family:var(--serif);font-size:29px;font-weight:400;letter-spacing:.08em;color:var(--ink)}
+.terms i{display:block;font-family:var(--sans);font-style:normal;font-size:10px;letter-spacing:.16em;color:var(--clay);margin-top:9px}
+.terms button.on b{color:var(--clay)}
+.ctx{font-family:var(--sans);font-size:11px;line-height:2;color:var(--ink-3);font-weight:300;padding:16px 0 0;min-height:40px;transition:opacity .4s}
+.obs{border-left:1px solid var(--clay);padding:3px 0 3px 16px;margin-top:22px;font-size:13.5px;line-height:2.05;letter-spacing:.05em;color:var(--ink-2);font-weight:300}
+.obs span{display:block;color:var(--ink-3);font-size:12.5px;margin-top:6px}
+
+/* 為自己做的事 */
+.deeds{list-style:none;margin:0;padding:0}
+.deeds li{display:flex;gap:20px;align-items:baseline;padding:15px 0;border-bottom:1px solid var(--line-2);font-size:15px;letter-spacing:.06em;font-weight:300;color:var(--ink)}
+.deeds span{font-family:var(--sans);font-size:10px;letter-spacing:.14em;color:var(--ink-3);min-width:34px}
+
+/* 引言 */
+.pull{margin:0;padding:38px 30px;text-align:center;background:linear-gradient(163deg,#FFFDF9,#F4EEE4);box-shadow:0 1px 2px rgba(60,45,32,.06),0 14px 30px -20px rgba(60,45,32,.28);border-radius:3px;position:relative;font-size:20px;line-height:2.15;letter-spacing:.07em;font-weight:400}
+.pull::before{content:"";position:absolute;inset:10px;border:1px solid var(--line-2);border-radius:1px}
+.pull cite{display:block;font-family:var(--sans);font-style:normal;font-size:10px;letter-spacing:.22em;color:var(--ink-3);margin-top:26px;font-weight:300}
+
+/* 回聲 */
+.echo{background:linear-gradient(163deg,#33291F,#241C15);color:var(--night-ink);border-radius:3px;padding:34px 28px;position:relative}
+.echo::before{content:"";position:absolute;inset:10px;border:1px solid rgba(237,228,218,.14);border-radius:1px;pointer-events:none}
+.ey{font-family:var(--sans);font-size:10px;letter-spacing:.24em;color:var(--clay-soft);margin-bottom:20px}
+.eq{font-size:19px;line-height:2.1;letter-spacing:.07em;font-weight:300}
+.ea{font-size:14px;line-height:2.15;letter-spacing:.06em;color:var(--night-ink-2);font-weight:300;border-top:1px solid rgba(237,228,218,.14);margin-top:22px;padding-top:20px}
+
+.nums{font-size:15px;line-height:2.5;letter-spacing:.06em;color:var(--ink-2);font-weight:300;margin:0}
+.nums b{font-family:var(--sans);font-size:19px;font-weight:400;color:var(--clay);letter-spacing:.04em;padding:0 3px}
+
+.nextq{font-size:23px;line-height:2.05;letter-spacing:.1em;font-weight:300;color:var(--ink);border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:34px 0;text-align:center}
+
+.rowbtn.light{display:flex;gap:9px}
+.ghost2{flex:1;font-family:var(--sans);font-size:11px;letter-spacing:.18em;padding:14px 0;background:none;border:1px solid var(--line);border-radius:2px;color:var(--ink-2);cursor:pointer;transition:all .45s var(--ease)}
+.ghost2:hover{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.foot{font-family:var(--sans);font-size:10.5px;line-height:2;color:var(--ink-3);text-align:center;margin:26px 0 0;font-weight:300}
+
+/* 佔位頁 */
+.stub{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 60px}
+.stub .m{font-size:17px;letter-spacing:.13em;color:var(--ink-2);font-weight:300;line-height:2.2}
+.stub .s{font-family:var(--sans);font-size:10px;letter-spacing:.22em;color:var(--ink-3);margin-top:20px;font-weight:300}
+
+.fade{opacity:0;transform:translateY(12px);animation:up .95s var(--ease) forwards}
+@keyframes up{to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+
+<div class="stage">
+  <div class="caption">
+    <div class="en">Margin</div>
+    <h1>留白</h1>
+    <p>低保真可點原型。示範「今天」、「情緒急救」與「月之書」三頁的排版節奏、語氣與動態。</p>
+    <hr>
+    <dl>
+      <dt>今天</dt>
+      <dd>· 切換四種語氣,看晨間之窗換句</dd>
+      <dd>· 點卡片翻面,看「為什麼是這句」</dd>
+      <dd>· 拖曳情緒色環,選 1–3 個詞</dd>
+      <dd>· 寫完三行,看它請你離開</dd>
+      <dt>急救</dt>
+      <dd>· 右下角的點 → 四路分流</dd>
+      <dd>· 🔥 那條路有真的呼吸節奏機</dd>
+      <dt>回顧 · 月之書</dt>
+      <dd>· 輕觸天氣暈染上的任何一天</dd>
+      <dd>· 點三個詞,看它們出現在哪</dd>
+      <dt>設計主張</dt>
+      <dd>· 語句是問句,不是斷言</dd>
+      <dd>· 沒有連續天數、沒有紅點</dd>
+      <dd>· 急救不在 tab bar 上</dd>
+      <dd>· 有數字,但沒有分數</dd>
+    </dl>
+  </div>
+
+  <div class="phone">
+    <div class="status"><span>9:41</span><span>─── ▮</span></div>
+
+    <!-- ═══ 今天 ═══ -->
+    <section class="screen" id="s-today">
+      <div class="scroll" id="todayScroll">
+        <div class="pad">
+
+          <div class="datehead fade" style="animation-delay:.05s">
+            <div class="d">八月十日 · 星期一</div>
+            <div class="t">早安。</div>
+          </div>
+
+          <div class="card fade" style="animation-delay:.18s">
+            <div class="label">晨間之窗</div>
+            <div class="tones" id="tones">
+              <button class="tone" aria-pressed="true" data-t="0">溫柔</button>
+              <button class="tone" aria-pressed="false" data-t="1">清醒</button>
+              <button class="tone" aria-pressed="false" data-t="2">幽默</button>
+              <button class="tone" aria-pressed="false" data-t="3">安靜</button>
+            </div>
+            <div class="window" id="win">
+              <div class="win-in">
+                <div class="face">
+                  <div class="quote" id="q">有些日子不是用來前進的,<br>是用來留下來的。</div>
+                  <div class="ask" id="a">如果今天只做一件不勉強自己的事,那會是什麼?</div>
+                  <div class="flipnote">輕觸翻面</div>
+                </div>
+                <div class="face back">
+                  <div>
+                    <div class="mech-k">為什麼是這句</div>
+                    <div class="mech-b" id="mb">自我慈悲練習:把大腦從威脅系統,切換到撫慰系統。</div>
+                  </div>
+                  <div class="mech-c" id="mc">研究顯示,對低自尊者重複正向斷言反而使心情變差。所以這裡給你的是問句,不是評語。</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card fade" style="animation-delay:.3s">
+            <div class="label">三行日課 · 約 90 秒</div>
+            <div class="line">
+              <div class="q"><span>今天身體最明顯的感覺是?</span><em>內感受</em></div>
+              <textarea rows="1" placeholder="肩膀一直是硬的…"></textarea>
+            </div>
+            <div class="line">
+              <div class="q"><span>今天我做到的一件小事</span><em>行為活化</em></div>
+              <textarea rows="1" placeholder="再小都算。"></textarea>
+            </div>
+            <div class="line">
+              <div class="q"><span>今天有誰讓我好過一點,<br>或我讓誰好過一點?</span><em>社會連結</em></div>
+              <textarea rows="1" placeholder="一句話、一個眼神都算。"></textarea>
+            </div>
+            <div class="done" id="done">
+              <p>今天的份完成了。<br>把手機放下吧。</p>
+              <button class="leave" onclick="leave()">好</button>
+            </div>
+          </div>
+
+          <div class="card fade" style="animation-delay:.42s">
+            <div class="label">此刻的情緒 · 選 1–3 個</div>
+            <div class="wheel-wrap">
+              <div class="chips" id="chips">
+                <button class="chip" aria-pressed="false">緊</button>
+                <button class="chip" aria-pressed="false">悶</button>
+                <button class="chip" aria-pressed="false">空</button>
+                <button class="chip" aria-pressed="false">燙</button>
+                <button class="chip" aria-pressed="false">沉</button>
+                <button class="chip" aria-pressed="false">飄</button>
+              </div>
+              <div class="wheel" id="wheel">
+                <div class="ringline"></div>
+                <div class="rotor" id="rotor"></div>
+                <div class="hub"><div id="hub" class="ph">拖曳轉盤</div></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card fade" style="animation-delay:.54s">
+            <button class="entry" onclick="alert('共振呼吸(未實作於此原型)')">
+              <span><b>共振呼吸</b><i>5.5 次 / 分鐘 · 90 秒</i></span>
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke-width="1"><path d="M6 3l6 6-6 6"/></svg>
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ 書寫 / 回顧 佔位 ═══ -->
+    <section class="screen stub" id="s-write" style="display:none">
+      <div class="m">書寫的四種體裁<br>在這裡。</div>
+      <div class="s">傾倒與收攏 · 換位 · 給未來的信</div>
+    </section>
+    <!-- ═══ 回顧 · 月之書 ═══ -->
+    <section class="screen" id="s-review" style="display:none">
+      <div class="scroll"><div class="pad book">
+
+        <div class="seg fade" style="animation-delay:.05s">
+          <button>週</button><button class="on">月</button><button>年</button>
+        </div>
+
+        <header class="cover fade" style="animation-delay:.14s">
+          <div class="yr">二〇二六</div>
+          <h2 class="mo">八月</h2>
+          <div class="ord">你的第三本月之書</div>
+          <div class="rule"></div>
+          <p class="intro">這一頁不是成績單。<br>它只是把你自己說過的話,<br>整理好還給你。</p>
+        </header>
+
+        <div class="chap fade" style="animation-delay:.22s">
+          <div class="label">這個月的天氣</div>
+          <div id="wash"></div>
+          <div class="washnote" id="washnote">輕觸任何一天</div>
+          <p class="aside">不用看懂。只是讓你知道,它一直在流動。</p>
+        </div>
+
+        <div class="chap fade" style="animation-delay:.3s">
+          <div class="label">你重複提到的三個詞</div>
+          <div class="terms" id="terms">
+            <button data-c="這個月出現 22 次。多半在晚上十點以後寫下。"><b>累</b><i>22</i></button>
+            <button data-c="出現 14 次。有 9 次跟工作的截止日在同一句話裡。"><b>趕</b><i>14</i></button>
+            <button data-c="出現 9 次。其中 7 次,你是在對別人說。"><b>沒關係</b><i>9</i></button>
+          </div>
+          <div class="ctx" id="ctx">輕觸一個詞</div>
+          <div class="obs">
+            這個月你比較常用「總是」這個詞 —— 六月 3 次,這個月 11 次。
+            <span>要不要看看,是在什麼情境下寫的?</span>
+          </div>
+        </div>
+
+        <div class="chap fade" style="animation-delay:.38s">
+          <div class="label">你為自己做的事</div>
+          <ul class="deeds">
+            <li><span>三日</span>買了新的檯燈</li>
+            <li><span>七日</span>跟阿姊講了兩小時電話</li>
+            <li><span>十二日</span>拒絕了一個週末的加班</li>
+            <li><span>十九日</span>把碗洗了</li>
+            <li><span>廿六日</span>去看了海</li>
+          </ul>
+        </div>
+
+        <div class="chap fade" style="animation-delay:.46s">
+          <div class="label">一句你自己寫的話</div>
+          <blockquote class="pull">
+            原來我不是懶,<br>我是累。<br>這兩件事差很多。
+            <cite>八月十九日 · 你寫的</cite>
+          </blockquote>
+        </div>
+
+        <div class="chap fade" style="animation-delay:.54s">
+          <div class="label">回聲</div>
+          <div class="echo">
+            <div class="ey">去年八月十日,你寫下 ——</div>
+            <div class="eq">「我不知道還能撐多久。」</div>
+            <div class="ea">然後你撐過來了。<br>而且你現在,正在讀這一句。</div>
+          </div>
+        </div>
+
+        <div class="chap fade" style="animation-delay:.62s">
+          <div class="label">數字,但不是分數</div>
+          <p class="nums">
+            你在這裡寫了 <b>47</b> 次。<br>
+            「累」這個字,三月 <b>31</b> 次,這個月 <b>22</b> 次。<br>
+            你用了 <b>4</b> 次急救,每一次都留下來了。
+          </p>
+        </div>
+
+        <div class="chap fade" style="animation-delay:.7s">
+          <div class="label">留給九月的一個問句</div>
+          <div class="nextq">九月,<br>你想少做一點什麼?</div>
+        </div>
+
+        <div class="chap fade" style="animation-delay:.78s">
+          <div class="rowbtn light">
+            <button class="ghost2" onclick="alert('原型:匯出為 PDF')">存成 PDF</button>
+            <button class="ghost2" onclick="alert('原型:印成一本小冊')">印成小冊</button>
+          </div>
+          <p class="foot">月之書只有你看得到。<br>要不要分享,永遠是你決定。</p>
+        </div>
+
+      </div></div>
+    </section>
+
+    <div class="topfade"></div>
+
+    <!-- ═══ 常駐急救點 ═══ -->
+    <button class="sosdot" id="sosdot" onclick="openSOS()" aria-label="情緒急救">急救</button>
+
+    <!-- ═══ Tab bar ═══ -->
+    <nav class="tabbar">
+      <button class="tab on" data-s="today">今天</button>
+      <button class="tab" data-s="write">書寫</button>
+      <button class="tab" data-s="review">回顧</button>
+    </nav>
+
+    <!-- ═══ 急救層 ═══ -->
+    <section class="sos" id="sos">
+      <div class="sosbar">
+        <button id="sosBack" onclick="sosBack()" style="visibility:hidden">← 回上一步</button>
+        <button onclick="closeSOS()">關閉</button>
+      </div>
+      <div class="scroll"><div class="pad" id="sosBody"></div></div>
+    </section>
+
+    <!-- ═══ 結束 ═══ -->
+    <div class="end" id="end">
+      <h3>你熬過來了。</h3>
+      <div class="askq">現在比剛才好一點了嗎?</div>
+      <div class="opts">
+        <button onclick="closeAll()">好一點</button>
+        <button onclick="closeAll()">差不多</button>
+        <button onclick="showRoute(3)">更糟</button>
+      </div>
+      <button class="close" onclick="closeAll()">離開</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+/* ── 晨間之窗 ───────────────────────── */
+const TONES=[
+ {q:'有些日子不是用來前進的,<br>是用來留下來的。',
+  a:'如果今天只做一件不勉強自己的事,那會是什麼?',
+  mb:'自我慈悲練習:把大腦從威脅系統,切換到撫慰系統。',
+  mc:'研究顯示,對低自尊者重複正向斷言反而使心情變差。所以這裡給你的是問句,不是評語。'},
+ {q:'今天大概還是<br>會有點難。',
+  a:'哪一件事是你做得到、而且做完會鬆一點的?',
+  mb:'行為活化:先動,情緒才跟上。順序不能反過來。',
+  mc:'低谷期不宜使用振作語氣。這裡先承認難,再給一個小到不會失敗的行動。'},
+ {q:'早安。地球還在轉,<br>你也還在。',
+  a:'今天最想翻白眼的事情是什麼?',
+  mb:'幽默是認知重評的一種,能拉開你與情緒之間的距離。',
+  mc:'幽默不是逃避。把處境說得好笑一點,前額葉就重新拿回了一點主導權。'},
+ {q:'早安。',
+  a:'今天不用回答任何問題。',
+  mb:'允許拒絕被鼓勵。',
+  mc:'這一頁刻意留白。對某些日子,最好的介入是不介入。'}
+];
+const $=s=>document.querySelector(s);
+$('#tones').onclick=e=>{
+  const b=e.target.closest('.tone'); if(!b)return;
+  [...document.querySelectorAll('.tone')].forEach(x=>x.setAttribute('aria-pressed',x===b));
+  const t=TONES[+b.dataset.t];
+  const q=$('#q'),a=$('#a');
+  q.style.opacity=a.style.opacity=0;
+  setTimeout(()=>{
+    q.innerHTML=t.q; a.textContent=t.a; $('#mb').textContent=t.mb; $('#mc').textContent=t.mc;
+    q.style.opacity=1; a.style.opacity=1;
+  },380);
+};
+$('#win').onclick=()=>$('#win').classList.toggle('flip');
+
+/* ── 三行日課 ───────────────────────── */
+const tas=[...document.querySelectorAll('.line textarea')];
+tas.forEach(t=>t.addEventListener('input',()=>{
+  t.style.height='auto'; t.style.height=t.scrollHeight+'px';
+  $('#done').classList.toggle('on',tas.every(x=>x.value.trim().length>0));
+}));
+function leave(){
+  const s=$('#todayScroll');
+  s.style.transition='opacity 1.3s'; s.style.opacity=.12;
+  setTimeout(()=>{s.style.opacity=1},2600);
+}
+
+/* ── 情緒色環 ───────────────────────── */
+const WORDS=['悵然','被辜負','羞赧','坐立難安','鈍鈍的','懸著','憤懣','鬆一口氣','想念','心虛','平靜','疲憊但滿足'];
+const rotor=$('#rotor'); let ang=0, picked=[];
+WORDS.forEach((w,i)=>{
+  const th=(i/WORDS.length)*Math.PI*2 - Math.PI/2, R=99;
+  const b=document.createElement('button');
+  b.className='word'; b.textContent=w;
+  b.dataset.x=Math.cos(th)*R; b.dataset.y=Math.sin(th)*R;
+  b.onclick=ev=>{ev.stopPropagation();pick(b,w)};
+  rotor.appendChild(b);
+});
+function place(){
+  [...rotor.children].forEach(b=>{
+    b.style.transform=`translate(-50%,-50%) translate(${b.dataset.x}px,${b.dataset.y}px) rotate(${-ang}deg)`;
+  });
+}
+function pick(b,w){
+  const i=picked.indexOf(w);
+  if(i>-1){picked.splice(i,1);b.classList.remove('sel')}
+  else{ if(picked.length>=3)return; picked.push(w); b.classList.add('sel') }
+  [...rotor.children].forEach(x=>x.classList.toggle('dim',picked.length>=3&&!x.classList.contains('sel')));
+  const h=$('#hub');
+  if(picked.length){h.className='picked';h.innerHTML=picked.join('<br>')}
+  else{h.className='ph';h.textContent='拖曳轉盤'}
+}
+let drag=false,startA=0,startAng=0;
+const cen=()=>{const r=$('#wheel').getBoundingClientRect();return{x:r.left+r.width/2,y:r.top+r.height/2}};
+const at=e=>{const c=cen();return Math.atan2(e.clientY-c.y,e.clientX-c.x)*180/Math.PI};
+$('#wheel').addEventListener('pointerdown',e=>{drag=true;startA=at(e);startAng=ang;rotor.classList.add('drag');$('#wheel').setPointerCapture(e.pointerId)});
+$('#wheel').addEventListener('pointermove',e=>{if(!drag)return;ang=startAng+(at(e)-startA);rotor.style.transform=`rotate(${ang}deg)`;place()});
+addEventListener('pointerup',()=>{if(!drag)return;drag=false;rotor.classList.remove('drag')});
+rotor.style.transform='rotate(0deg)'; place();
+
+/* ── Tabs ───────────────────────────── */
+document.querySelector('.tabbar').onclick=e=>{
+  const b=e.target.closest('.tab'); if(!b)return;
+  [...document.querySelectorAll('.tab')].forEach(x=>x.classList.toggle('on',x===b));
+  ['today','write','review'].forEach(k=>{
+    const el=document.getElementById('s-'+k);
+    el.style.display = (k===b.dataset.s)?'':'none';
+    if(k===b.dataset.s){el.style.animation='none';void el.offsetWidth;el.style.animation='fadein .8s var(--ease)'}
+  });
+};
+
+/* ── 急救 ───────────────────────────── */
+const ic={
+  fire:'<svg width="26" height="26" viewBox="0 0 26 26" fill="none" stroke-width="1"><path d="M13 3c1 4-3 5-3 9a3 3 0 006 0c0-2-1-3-1-4 3 2 5 4 5 8a7 7 0 01-14 0c0-5 5-8 7-13z"/></svg>',
+  mist:'<svg width="26" height="26" viewBox="0 0 26 26" fill="none" stroke-width="1" stroke-linecap="round"><path d="M4 9h12M9 14h13M4 19h11"/></svg>',
+  loop:'<svg width="26" height="26" viewBox="0 0 26 26" fill="none" stroke-width="1"><path d="M13 22c-5 0-9-3-9-7s4-6 8-6 7 2 7 5-3 4-5 4-4-1-4-3 2-3 3-3"/></svg>',
+  cand:'<svg width="26" height="26" viewBox="0 0 26 26" fill="none" stroke-width="1" stroke-linecap="round"><path d="M13 3c2 2 2 4 0 6-2-2-2-4 0-6z"/><path d="M9 11h8v11H9zM6 22h14"/></svg>'
+};
+let hist=[];
+function openSOS(){hist=[];$('#sos').classList.add('on');routeMenu()}
+function closeSOS(){$('#sos').classList.remove('on');stopBreath()}
+function closeAll(){$('#end').classList.remove('on');closeSOS()}
+function sosBack(){stopBreath();hist.pop();(hist.pop()||routeMenu)()}
+function render(html,fn){
+  hist.push(fn);
+  $('#sosBack').style.visibility = hist.length>1?'visible':'hidden';
+  const b=$('#sosBody'); b.innerHTML=html;
+  b.style.animation='none';void b.offsetWidth;b.style.animation='up .8s var(--ease)';
+  $('#sos .scroll').scrollTop=0;
+}
+function routeMenu(){
+  render(`<h2>現在是哪一種?</h2><div class="sub">不同的狀態,需要相反的處置</div>
+  <button class="route" onclick="showRoute(0)">${ic.fire}<span><b>快要炸開</b><i>心跳很快 · 停不下來 · 想大叫</i></span></button>
+  <button class="route" onclick="showRoute(1)">${ic.mist}<span><b>整個人是空的</b><i>麻木 · 沒有感覺 · 不在這裡</i></span></button>
+  <button class="route" onclick="showRoute(2)">${ic.loop}<span><b>腦子停不下來</b><i>同一件事想了很多遍</i></span></button>
+  <button class="route crisis" onclick="showRoute(3)">${ic.cand}<span><b>我撐不住了</b><i>需要有人現在就在</i></span></button>
+  <div class="note">這裡不需要登入,沒有網路也能用,不會記進任何統計。<br>隨時可以離開,不會有人問你為什麼。</div>`,routeMenu);
+}
+function showRoute(i){[r0,r1,r2,r3][i]()}
+
+/* SOS-1 快要炸開 */
+function r0(){
+  render(`<h2>先讓身體慢下來</h2><div class="sub">下調過度喚起 · 由上往下試,隨時可跳過</div>
+  <div class="breath">
+    <div class="orb"><div class="halo" id="halo"></div><div class="core" id="core"></div><div class="cue" id="cue">準備</div></div>
+    <div class="count" id="cyc">第 1 輪 · 共 4 輪</div>
+  </div>
+  <div class="steps">
+    <button class="step act"><span class="n">01</span><span><b>生理嘆息</b><p>兩次鼻子吸氣,第二次短短補一口,然後長長地從嘴巴吐掉。目前少數在單次操作就能降低生理喚起的手法。</p></span></button>
+    <button class="step" onclick="this.classList.toggle('act')"><span class="n">02</span><span><b>冷刺激</b><p>冷水潑臉,或握住冰塊十秒。低溫誘發潛水反射,心率會下降 — 急性焦慮最快的生理煞車之一。</p></span></button>
+    <button class="step" onclick="this.classList.toggle('act')"><span class="n">03</span><span><b>吸 4 吐 8</b><p>吐氣比吸氣長的時候,副交感神經佔上風。</p></span></button>
+    <button class="step" onclick="this.classList.toggle('act')"><span class="n">04</span><span><b>全身用力,然後放掉</b><p>握拳、聳肩、繃緊七秒,一次鬆開。給靜不下來、需要做點什麼的身體。</p></span></button>
+    <button class="step" onclick="this.classList.toggle('act')"><span class="n">05</span><span><b>劇烈活動 30 秒</b><p>原地開合跳或快走上樓。<span class="warn">有心血管疾病者請跳過這一項。</span></p></span></button>
+  </div>
+  <div class="rowbtn"><button class="ghost" onclick="finish()">好一點了</button><button class="ghost" onclick="showRoute(3)">還是不行</button></div>`,r0);
+  startBreath();
+}
+
+/* 呼吸節奏機 */
+let bt=null, cycle=0;
+const PHASES=[{c:'吸',s:1,d:1600},{c:'再吸一點',s:1.12,d:900},{c:'長長吐掉',s:.5,d:6000},{c:'',s:.5,d:1100}];
+function startBreath(){
+  cycle=0;let p=0;
+  const tick=()=>{
+    const ph=PHASES[p], orb=[document.getElementById('halo'),document.getElementById('core')], cue=document.getElementById('cue');
+    if(!cue)return;
+    orb.forEach(o=>{o.style.setProperty('--dur',ph.d+'ms');o.style.setProperty('--s',ph.s)});
+    cue.style.opacity=ph.c?1:.25; cue.textContent=ph.c||'⋯';
+    bt=setTimeout(()=>{
+      p=(p+1)%PHASES.length;
+      if(p===0){cycle++;const el=document.getElementById('cyc');
+        if(cycle>=4){if(el)el.textContent='四輪完成了。';return}
+        if(el)el.textContent=`第 ${cycle+1} 輪 · 共 4 輪`;}
+      tick();
+    },ph.d);
+  };
+  setTimeout(tick,500);
+}
+function stopBreath(){clearTimeout(bt)}
+
+/* SOS-2 整個人是空的 */
+function r1(){
+  render(`<h2>回到身體裡</h2><div class="sub">麻木與解離時,呼吸練習通常沒用 — 需要的是強烈但安全的感官輸入</div>
+  <div class="steps">
+    <button class="step act" onclick="this.classList.toggle('act')"><span class="n">01</span><span><b>五感落地</b><p>說出看得到的 5 樣、摸得到的 4 樣、聽得到的 3 樣、聞得到的 2 樣、嘗得到的 1 樣。<span class="warn">臨床常用,實證強度中等。</span></p></span></button>
+    <button class="step" onclick="this.classList.toggle('act')"><span class="n">02</span><span><b>強感官錨</b><p>含一顆很酸的糖、握住冰的東西、聞味道重的東西、腳底用力踩地板。</p></span></button>
+    <button class="step" onclick="this.classList.toggle('act')"><span class="n">03</span><span><b>蝴蝶擁抱</b><p>雙手交叉在胸前,左右輪流輕拍。<span class="warn">雙側刺激單獨使用的證據較弱,但安全,許多人主觀有效。</span></p></span></button>
+    <button class="step" onclick="this.classList.toggle('act')"><span class="n">04</span><span><b>說出三個現在看得到的東西</b><p>把注意力從裡面,拉到外面。</p></span></button>
+    <button class="step" onclick="this.classList.toggle('act')"><span class="n">05</span><span><b>動一下,不需要是運動</b><p>走到窗邊。開燈。喝一口水。給自己一個做得完的最小動作。</p></span></button>
+  </div>
+  <div class="rowbtn"><button class="ghost" onclick="finish()">好一點了</button><button class="ghost" onclick="showRoute(3)">還是不行</button></div>`,r1);
+}
+
+/* SOS-3 停不下來 */
+function r2(){
+  render(`<h2>先讓它出來</h2><div class="sub">不用寫得好 · 六十秒 · 可以選擇不留下</div>
+  <textarea class="dump" placeholder="想到什麼寫什麼。不用標點,不用通順。"></textarea>
+  <div class="rowbtn">
+    <button class="ghost" onclick="burn(this)">寫完了,燒掉</button>
+    <button class="ghost" onclick="third(this)">換成第三人稱</button>
+  </div>
+  <button class="route" style="margin-top:34px" onclick="r2b()">
+    <svg width="26" height="26" viewBox="0 0 26 26" fill="none" stroke-width="1" stroke-linecap="round"><path d="M4 17c4-9 14-9 18 0"/><path d="M13 3v4M6 7l2 3M20 7l-2 3"/></svg>
+    <span><b>把「為什麼」換成「怎麼做」</b><i>換一種想法的形狀 · 約 3 分鐘</i></span>
+  </button>
+  <div class="steps" style="margin-top:22px">
+    <button class="step" onclick="this.classList.toggle('act')"><span class="n">·</span><span><b>擔憂時段</b><p>「今天晚上七點,我給這件事十五分鐘。」把它排進行事曆 — 重點不是不想,是改變想的時間與地點。</p></span></button>
+    <button class="step" onclick="this.classList.toggle('act')"><span class="n">·</span><span><b>一個可決定的事</b><p>這件事裡,接下來這一小時,有什麼是你能決定的?沒有就是沒有,不用勉強找光明面。</p></span></button>
+  </div>
+  <div class="rowbtn"><button class="ghost" onclick="finish()">可以了</button><button class="ghost" onclick="showRoute(3)">還是不行</button></div>`,r2);
+}
+function burn(b){
+  const t=b.closest('.pad').querySelector('.dump');
+  t.style.transition='opacity 1.6s, filter 1.6s'; t.style.opacity=0; t.style.filter='blur(7px)';
+  setTimeout(()=>{t.value='';t.style.filter='none';t.style.opacity=1;t.placeholder='燒掉了。只留下:你今天寫了 1 分鐘。'},1700);
+}
+function third(b){
+  const t=b.closest('.pad').querySelector('.dump');
+  if(!t.value.trim()){t.placeholder='先寫一點東西,才能換位。';return}
+  t.value='她'+t.value.replace(/^我/,'');
+  b.textContent='距離感,是反芻的解藥';
+}
+
+/* SOS-3b 具體化改寫器(RF-CBT:改思考的形狀,不是內容) */
+const ABS=['為什麼','總是','永遠','根本','每次','都是','是不是','代表','沒有人','沒人','一定','活該','應該','怎麼會','老是'];
+function r2b(){
+  render(`<h2>把「為什麼」換成「怎麼做」</h2>
+  <div class="sub">思考的形狀,比思考的內容容易改</div>
+  <p class="hold" style="font-size:15.5px;margin-bottom:8px">你不是壞掉了。<br>你的大腦在解一道題,<br>只是卡在「為什麼是我」那一段,<br>過不去「那我現在能做什麼」。</p>
+  <div class="label2">那句一直重複的話</div>
+  <textarea class="dump" id="absIn" style="min-height:92px" placeholder="例如:為什麼每次都是我在收拾?"></textarea>
+  <div class="rowbtn"><button class="ghost" onclick="shapeIt()">看看它的形狀</button></div>
+
+  <div id="shaped" style="display:none">
+    <div class="label2">它現在的形狀</div>
+    <div class="frame" id="absOut"></div>
+    <p class="hint" id="absNote"></p>
+
+    <div class="label2">換三個問題問問看</div>
+    <div class="qb"><p>那件事具體發生在什麼時候、什麼地方?</p><input id="q1" placeholder="昨天晚上,在廚房"></div>
+    <div class="qb"><p>當時實際上發生的第一件事是什麼?先不要評價。</p><input id="q2" placeholder="我看到水槽裡有三個碗"></div>
+    <div class="qb"><p>接下來這一小時,你可以做的一個小動作是什麼?</p><input id="q3" placeholder="傳一句話跟他說我需要幫忙"></div>
+    <div class="rowbtn"><button class="ghost" onclick="buildIt()">組起來</button></div>
+  </div>
+
+  <div id="built" style="display:none">
+    <div class="cmp">
+      <div class="row"><div class="k">原本的形狀</div><div class="a" id="cmpA"></div></div>
+      <div class="row"><div class="k">現在的形狀</div><div class="b" id="cmpB"></div></div>
+    </div>
+    <p class="hint">兩句講的是同一件事。<br>差別是第二句有下一步。</p>
+    <div class="rowbtn"><button class="ghost" onclick="finish()">可以了</button><button class="ghost" onclick="r2()">再寫一次</button></div>
+  </div>
+
+  <div class="note">這是反芻焦點認知行為治療(RF-CBT)的核心做法:不辯論想法對不對,只把抽象的評價換成具體的過程。</div>`,r2b);
+}
+function shapeIt(){
+  const v=document.getElementById('absIn').value.trim();
+  if(!v){document.getElementById('absIn').placeholder='先寫一句。任何一句都可以。';return}
+  let hit=[],out=v;
+  ABS.forEach(w=>{ if(out.includes(w)){hit.push(w); out=out.split(w).join('§'+w+'§')} });
+  document.getElementById('absOut').innerHTML=out.split('§').map((s,i)=>i%2?`<mark>${s}</mark>`:s).join('');
+  document.getElementById('absNote').textContent = hit.length
+    ? `標起來的是評價,不是事實。它們讓這句話沒有出口 — 沒有時間、沒有地點、沒有下一步。`
+    : `這句話沒有明顯的評價詞。那更好,直接往下走。`;
+  const s=document.getElementById('shaped'); s.style.display='block';
+  s.style.animation='none';void s.offsetWidth;s.style.animation='up .7s var(--ease)';
+}
+function buildIt(){
+  const g=id=>document.getElementById(id).value.trim();
+  const a=g('q1'),b=g('q2'),c=g('q3');
+  if(!a||!b||!c){document.getElementById('q1').placeholder='三個都填,才組得起來';return}
+  document.getElementById('cmpA').textContent=document.getElementById('absIn').value.trim();
+  document.getElementById('cmpB').textContent=`${a},${b}。接下來這一小時,我要${c}。`;
+  const el=document.getElementById('built'); el.style.display='block';
+  el.style.animation='none';void el.offsetWidth;el.style.animation='up .8s var(--ease)';
+  el.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+/* SOS-4 危機 */
+function r3(){
+  render(`<h2 style="letter-spacing:.12em">我在。</h2>
+  <p class="hold">你不用解釋發生了什麼事,<br>也不用現在就好起來。<br>先把接下來的十分鐘,<br>跟人一起度過。</p>
+  <button class="tel" onclick="alert('原型:此處會直接撥號')"><span><b>安心專線</b><i>24 小時 · 免付費</i></span><span class="num">1925</span></button>
+  <button class="tel" onclick="alert('原型:此處會直接撥號')"><span><b>生命線</b><i>24 小時</i></span><span class="num">1995</span></button>
+  <button class="tel" onclick="alert('原型:此處會直接撥號')"><span><b>張老師</b><i>每日 09:00–21:00</i></span><span class="num">1980</span></button>
+  <div class="rowbtn" style="margin-top:22px">
+    <button class="ghost" onclick="alert('原型:撥給你預先設定的緊急聯絡人')">打給我的人</button>
+    <button class="ghost" onclick="alert('原型:進入一頁只有呼吸與極少字的畫面')">先陪我五分鐘</button>
+  </div>
+  <div class="note">這裡沒有測驗,不會給你分數,也不會通知任何人。<br>你在好的日子裡寫下的安全計畫,會出現在這一頁。</div>`,r3);
+}
+
+function finish(){stopBreath();$('#end').classList.add('on')}
+
+/* ── 月之書:這個月的天氣 ─────────────── */
+const MOOD=[.42,.38,.30,.35,.28,.55,.60,.45,.32,.25,.22,.30,.44,.58,.62,.50,.40,.35,.48,.66,.72,.60,.52,.45,.55,.68,.75,.70,.62,.58,.65];
+const DAYS={2:'買了新的檯燈',3:'開會前手一直在抖',6:'跟阿姊講了兩小時電話',8:'肩膀一整天是硬的',11:'拒絕了一個週末的加班',14:'睡了十一個小時',18:'把碗洗了',20:'今天沒有想哭',25:'去看了海',28:'又開始趕了'};
+const CN=['一','二','三','四','五','六','七','八','九','十','十一','十二','十三','十四','十五','十六','十七','十八','十九','二十','廿一','廿二','廿三','廿四','廿五','廿六','廿七','廿八','廿九','三十','卅一'];
+const lerp=(a,b,t)=>a.map((v,i)=>Math.round(v+(b[i]-v)*t));
+const rgb=a=>`rgb(${a[0]},${a[1]},${a[2]})`;
+function moodColor(m){
+  const lo=[147,161,168], mid=[216,196,166], hi=[201,100,66];
+  return m<.5 ? rgb(lerp(lo,mid,m/.5)) : rgb(lerp(mid,hi,(m-.5)/.5));
+}
+(function wash(){
+  const W=332,H=150,n=MOOD.length,step=(W-24)/(n-1);
+  const pt=i=>[12+i*step, H-22-MOOD[i]*104];
+  let blobs='',pathd='';
+  MOOD.forEach((m,i)=>{
+    const [x,y]=pt(i);
+    blobs+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="15" fill="${moodColor(m)}" opacity=".42"/>`;
+    blobs+=`<circle cx="${x.toFixed(1)}" cy="${(y+4).toFixed(1)}" r="7" fill="${moodColor(m)}" opacity=".34"/>`;
+    pathd+=(i?' L':'M')+x.toFixed(1)+' '+y.toFixed(1);
+  });
+  let hits='';
+  MOOD.forEach((m,i)=>{
+    const [x]=pt(i);
+    hits+=`<rect class="hit" x="${(x-step/2).toFixed(1)}" y="0" width="${step.toFixed(1)}" height="${H}" data-i="${i}"/>`;
+  });
+  document.getElementById('wash').innerHTML=`
+  <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-label="這個月的情緒暈染">
+    <defs>
+      <filter id="bleed" x="-25%" y="-25%" width="150%" height="150%">
+        <feGaussianBlur stdDeviation="8" result="b"/>
+        <feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="3" seed="7" result="t"/>
+        <feDisplacementMap in="b" in2="t" scale="16" xChannelSelector="R" yChannelSelector="G"/>
+      </filter>
+    </defs>
+    <g filter="url(#bleed)">${blobs}</g>
+    <path d="${pathd}" fill="none" stroke="rgba(42,37,33,.22)" stroke-width=".7"/>
+    <line id="mk" class="mark" x1="0" y1="6" x2="0" y2="${H-6}"/>
+    ${hits}
+  </svg>`;
+  document.getElementById('wash').onclick=e=>{
+    const r=e.target.closest('.hit'); if(!r)return;
+    const i=+r.dataset.i, [x]=pt(i), t=DAYS[i];
+    const mk=document.getElementById('mk');
+    mk.setAttribute('x1',x); mk.setAttribute('x2',x); mk.style.opacity=.3;
+    const el=document.getElementById('washnote'); el.style.opacity=0;
+    setTimeout(()=>{
+      el.innerHTML = t ? `八月${CN[i]}日 · 你寫下 <b>「${t}」</b>` : `八月${CN[i]}日 · 這一天沒有寫。也沒關係。`;
+      el.style.opacity=1;
+    },220);
+  };
+})();
+
+document.getElementById('terms').onclick=e=>{
+  const b=e.target.closest('button'); if(!b)return;
+  [...document.querySelectorAll('.terms button')].forEach(x=>x.classList.toggle('on',x===b));
+  const c=document.getElementById('ctx'); c.style.opacity=0;
+  setTimeout(()=>{c.textContent=b.dataset.c;c.style.opacity=1},220);
+};
+</script>
+</body>
+</html>
