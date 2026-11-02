@@ -41,3 +41,11 @@
 ---
 
 *本專案文件為設計發想,非臨床指引。*
+
+
+---
+
+## 著作權 Copyright
+
+© 2026　吳昀慶 Yun-Ching Wu
+授權條款見 [`LICENSE`](LICENSE)　詳細聲明見 [`COPYRIGHT.md`](COPYRIGHT.md)
